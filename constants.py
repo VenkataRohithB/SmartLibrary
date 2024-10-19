@@ -8,6 +8,10 @@ PG_PASSWORD = os.getenv("PG_PASSWORD")
 PG_DATABASE = os.getenv("PG_DATABASE")
 SENDGRID_API = os.getenv("SENDGRID_API")
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2639c10 (Proper Update)
 TOKEN_ALGORITHM = "HS256"
 
 # STATUS CODES
