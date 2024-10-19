@@ -13,7 +13,7 @@ router = APIRouter(tags=["otp"])
 
 @router.get("/generate_otp")
 @authorize_token
-async def generate_otp(user_email: str):
+async def generate_otp(request: Request, user_email: str, token: HTTPAuthorizationCredentials = Depends(security)):
     otp_secret = pyotp.random_base32()
     totp = pyotp.TOTP(otp_secret)
     otp = totp.now()
@@ -32,7 +32,7 @@ async def generate_otp(user_email: str):
 
 @router.get("/validate_otp")
 @authorize_token
-async def validate_otp(user_email: str, otp: str):
+async def validate_otp(request: Request,user_email: str, otp: str,  token: HTTPAuthorizationCredentials = Depends(security)):
     select_response = select_query(table_name=S_USER_TABLE, conditions={"user_email": user_email})
     if select_response:
         select_response = select_response[0]
@@ -67,7 +67,7 @@ async def login(email: str, password: str):
 
 @router.get("/check_in")
 @authorize_token
-async def check_in(email: str, password: str):
+async def check_in(request: Request, email: str, password: str, token: HTTPAuthorizationCredentials = Depends(security)):
     condition = {"user_email": email}
     select_response = select_query(table_name=S_USER_TABLE, conditions=condition)
     if select_response:
@@ -92,7 +92,7 @@ async def check_in(email: str, password: str):
 
 @router.get("/check_out")
 @authorize_token
-async def check_out(user_id: int):
+async def check_out(request: Request, user_id: int, token: HTTPAuthorizationCredentials = Depends(security)):
     condition = {"id": user_id}
     select_response = select_query(table_name=S_USER_TABLE, conditions=condition)
     if select_response:
