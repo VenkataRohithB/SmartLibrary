@@ -45,14 +45,16 @@ def failure_json(message: str, status_code: int):
                                  "count": 0, "records": [], "status_bool": False}, status_code=status_code)
 
 
-def create_access_token(user_name: str, expires_time: int = None) -> str:
+def create_access_token(user_id: int, meta_data=None, expires_time: int = None) -> str:
     if expires_time == -1:
         expire = datetime.utcnow() + timedelta(minutes=1440 * 365 * 10)
     elif expires_time:
         expire = datetime.utcnow() + timedelta(minutes=expires_time)
     else:
         expire = datetime.utcnow() + timedelta(minutes=1440 * 7)
-    to_encode = {"username": user_name}
+    to_encode = {"user_id": user_id}
+    if meta_data:
+        to_encode["meta_data"] = meta_data
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=TOKEN_ALGORITHM)
     return encoded_jwt

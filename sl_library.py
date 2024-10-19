@@ -2,7 +2,6 @@ from fastapi import Body, APIRouter, Request, Depends, FastAPI
 from fastapi.security import HTTPAuthorizationCredentials
 
 from constants import *
-from data_validator import Library
 from db_helper import insert_query, select_query, update_query, delete_query
 from om_helper import *
 
@@ -13,6 +12,14 @@ router = APIRouter(tags=["library"], prefix="/library")
 @authorize_token
 async def add_library(request: Request, library_name: str, library_address: str,
                       token: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Add a new library to the system.
+
+    - **library_name**: The name of the library.
+    - **library_address**: The address of the library.
+
+    Returns a success message with the added library details.
+    """
     data = {"library_name": library_name, "library_address": library_address}
     response = insert_query(table_name=S_LIBRARY_TABLE, data=data)
     if response["status_bool"]:
@@ -24,6 +31,15 @@ async def add_library(request: Request, library_name: str, library_address: str,
 @authorize_token
 async def fetch_library(request: Request, record_id: int = None, library_name: str = None, num_records: int = None,
                         token: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Fetch libraries based on optional filters.
+
+    - **record_id**: (Optional) ID of the library to fetch.
+    - **library_name**: (Optional) Name of the library to fetch.
+    - **num_records**: (Optional) Number of records to return.
+
+    Returns library details or a not found message.
+    """
     conditions = {}
     if record_id is not None:
         conditions["id"] = record_id
@@ -38,6 +54,13 @@ async def fetch_library(request: Request, record_id: int = None, library_name: s
 @router.delete("/")
 @authorize_token
 async def delete_library(request: Request, record_id: int, token: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Delete a library from the system.
+
+    - **record_id**: ID of the library to delete.
+
+    Returns a success message if deleted, otherwise an error message.
+    """
     delete_response = delete_query(table_name=S_LIBRARY_TABLE, record_id=record_id)[0]
     if delete_response["status_bool"]:
         return success_json(records=[], message="Record Deleted Successfully")
@@ -48,6 +71,14 @@ async def delete_library(request: Request, record_id: int, token: HTTPAuthorizat
 @authorize_token
 async def update_library(request: Request, record_id: int, data: dict = Body(...),
                          token: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Update library details.
+
+    - **record_id**: ID of the library to update.
+    - **data**: A dictionary containing updated library fields.
+
+    Returns a success message if updated, otherwise an error message.
+    """
     update_response = update_query(table_name=S_LIBRARY_TABLE, conditions={"id": record_id}, data=data)[0]
     if update_response["status_bool"]:
         return success_json(records=update_response["records"], message="Record Updated Successfully")
@@ -58,6 +89,14 @@ async def update_library(request: Request, record_id: int, data: dict = Body(...
 @authorize_token
 async def user_library(request: Request, library_id: int, user_id: int,
                        token: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Add a user to a specific library.
+
+    - **library_id**: ID of the library.
+    - **user_id**: ID of the user.
+
+    Returns a success message if the user is added, otherwise an error message.
+    """
     user = select_query(table_name=S_USER_TABLE, conditions={"id": user_id})
     library = select_query(table_name=S_LIBRARY_TABLE, conditions={"id": library_id})
     if not user:
@@ -81,6 +120,16 @@ async def user_library(request: Request, library_id: int, user_id: int,
 async def fetch_library_user(request: Request, library_id: int = None, user_id: int = None, user_status: Status = None,
                              num_records: int = None,
                              token: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Fetch users associated with a specific library.
+
+    - **library_id**: (Optional) ID of the library.
+    - **user_id**: (Optional) ID of the user.
+    - **user_status**: (Optional) Status of the user (active/inactive).
+    - **num_records**: (Optional) Number of records to return.
+
+    Returns user details or a not found message.
+    """
     conditions = {}
     if library_id is not None:
         conditions["library_id"] = library_id
@@ -98,6 +147,14 @@ async def fetch_library_user(request: Request, library_id: int = None, user_id: 
 @authorize_token
 async def delete_library_user(request: Request, user_id, library_id,
                               token: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Remove a user from a specific library.
+
+    - **user_id**: ID of the user to be removed.
+    - **library_id**: ID of the library.
+
+    Returns a success message if the user is deleted, otherwise an error message.
+    """
     select_relation = select_query(table_name=S_LIBRARY_USER_TABLE,
                                    conditions={"library_id": library_id, "user_id": user_id})
     if not select_relation:
