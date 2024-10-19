@@ -41,7 +41,7 @@ async def delete_library(request: Request, record_id: int, token: HTTPAuthorizat
     delete_response = delete_query(table_name=S_LIBRARY_TABLE, record_id=record_id)[0]
     if delete_response["status_bool"]:
         return success_json(records=[], message="Record Deleted Successfully")
-    return failure_json(message=f"Cannot Delete Record, {delete_response["message"]}", status_code=S_BADREQUEST_CODE)
+    return failure_json(message=f"Cannot Delete Record, {delete_response['message']}", status_code=S_BADREQUEST_CODE)
 
 
 @router.patch("/")
@@ -51,7 +51,7 @@ async def update_library(request: Request, record_id: int, data: dict = Body(...
     update_response = update_query(table_name=S_LIBRARY_TABLE, conditions={"id": record_id}, data=data)[0]
     if update_response["status_bool"]:
         return success_json(records=update_response["records"], message="Record Updated Successfully")
-    return failure_json(message=f"Something Went Wrong, {update_response["message"]}", status_code=S_BADREQUEST_CODE)
+    return failure_json(message=f"Something Went Wrong, {update_response['message']}", status_code=S_BADREQUEST_CODE)
 
 
 @router.post("/users")
