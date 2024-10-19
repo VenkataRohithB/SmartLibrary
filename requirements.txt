@@ -4,3 +4,5 @@ pytz
 uvicorn
 psycopg2
 pydantic
+pyotp
+pandas
