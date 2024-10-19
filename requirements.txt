@@ -2,3 +2,5 @@ fastapi
 python-jose[cryptography]
 pytz
 uvicorn
+psycopg2
+pydantic
