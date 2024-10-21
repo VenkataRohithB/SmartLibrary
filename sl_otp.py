@@ -77,7 +77,7 @@ async def login(user_email: str, password: str):
                          data={"user_otp": otp, "otp_expiry": OTP_VALID_TIME})
 
             update_query(table_name=S_USER_TABLE, conditions={'id': user_id}, data={"user_checkin": True})
-            records = [{"token": create_access_token(user_id=select_response["user_id"], expires_time=2629743),
+            records = [{"token": create_access_token(user_id=select_response["id"], expires_time=2629743),
                         "user_id": user_id}]
             return success_json(records=records, message="Successfully logged in")
 
