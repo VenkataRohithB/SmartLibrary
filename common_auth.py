@@ -7,11 +7,11 @@ router = APIRouter(tags=["auth"])
 
 
 @router.get("/generate_token")
-async def token_generation(user_name: str, passcode: str, expiry: int = None):
+async def token_generation(user_id: int, passcode: str, expiry: int = None):
     if passcode != SECRET_KEY:
         return failure_json(message="INVALID PASSCODE...!", status_code=S_BADREQUEST_CODE)
 
-    token = {"token": create_access_token(user_name=user_name, expires_time=expiry)}
+    token = {"token": create_access_token(user_id=user_id, expires_time=expiry)}
     return success_json(records=[token], message="Generated new token successfully")
 
 

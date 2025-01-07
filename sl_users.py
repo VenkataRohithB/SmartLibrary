@@ -89,7 +89,7 @@ async def update_user(
     """
     select_response = select_query(table_name=S_USER_TABLE, conditions={"id": record_id})
     if select_response:
-        if data.get("id"):
+        if data.get("id") or data.get("user_phone") or data.get("user_email"):
             return failure_json(message="Cannot update any of these: ['id', 'user_phone', 'user_email']",
                                 status_code=S_BADREQUEST_CODE)
         validation_response = validate_user_fields(user_details=data)

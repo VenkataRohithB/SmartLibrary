@@ -49,7 +49,7 @@ async def validate_otp(request: Request, user_email: str, otp: str, token: HTTPA
         elif select_response["user_otp"] == otp and present_time > valid_time:
             return failure_json(message="OTP Expired, Invalid OTP", status_code=S_BADREQUEST_CODE)
         elif select_response["user_otp"] == otp and present_time < valid_time:
-            records = [{"token": create_access_token(user_name=select_response["user_name"], expires_time=2629743)}]
+            records = [{"token": create_access_token(user_id=select_response["id"], expires_time=2629743)}]
             return success_json(records=records, message="Valid OTP")
     return failure_json(message="User Not Found in DB", status_code=S_NOTFOUND_CODE)
 
@@ -76,10 +76,12 @@ async def login(user_email: str, password: str):
             update_query(table_name=S_USER_TABLE, conditions={"user_email": user_email},
                          data={"user_otp": otp, "otp_expiry": OTP_VALID_TIME})
 
-            update_query(table_name=S_USER_TABLE, conditions={'id': user_id}, data={"user_checkin": True})
+            # update_query(table_name=S_USER_TABLE, conditions={'id': user_id}, data={"user_checkin": True})
             records = [{"token": create_access_token(user_id=select_response["id"], expires_time=2629743),
                         "user_id": user_id}]
             return success_json(records=records, message="Successfully logged in")
+        return failure_json(message="Invalid Password",status_code=S_UNAUTHORIZED_CODE)
+    return failure_json(message="User Not Found",status_code=S_NOTFOUND_CODE)
 
 
 @router.get("/validate_pass", summary="Verifies Check-In and Out Pass",

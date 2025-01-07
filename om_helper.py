@@ -35,13 +35,13 @@ def parse_timestamp(str_timestamp: str = None, dt_timestamp: datetime = None):
 
 
 def success_json(records: list, message: str = ""):
-    return JSONResponse(content={"status": "success", "message": message, "timestamp": current_time(),
+    return JSONResponse(content={"status": "success", "status_code":200, "message": message, "timestamp": current_time(),
                                  "count": len(records),
                                  "records": records, "status_bool": True}, status_code=200)
 
 
 def failure_json(message: str, status_code: int):
-    return JSONResponse(content={"status": "failure", "message": message, "timestamp": current_time(),
+    return JSONResponse(content={"status": "failure", "status_code":status_code, "message": message, "timestamp": current_time(),
                                  "count": 0, "records": [], "status_bool": False}, status_code=status_code)
 
 

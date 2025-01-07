@@ -152,6 +152,7 @@ async def penalties(
         return failure_json(message="Please Enter At least 1 Parameter", status_code=S_BADREQUEST_CODE)
 
     select_response = select_query(table_name=S_RENTAL_PENALTY_VIEW, conditions=conditions, num_records=num_records)
+    print(select_response)
     if select_response:
         return success_json(records=select_response)
     return failure_json(message="No Records Found", status_code=S_NOTFOUND_CODE)

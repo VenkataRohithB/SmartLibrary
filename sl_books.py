@@ -111,7 +111,9 @@ async def update_book(
     - **record_id**: ID of the book to be updated.
     - **data**: Fields to be updated in the book record.
     """
+    if data.get("id"):
+        return failure_json(message="Cannot change ID", status_code=S_FORBIDDEN_CODE)
     update_response = update_query(table_name=S_BOOK_TABLE, conditions={"id": record_id}, data=data)[0]
-    if update_response["status_bool"]:
+    if update_response["status_bool"] and update_response.get("records") is not None:
         return success_json(records=update_response["records"], message="Record Updated Successfully")
     return failure_json(message=f"Something Went Wrong, {update_response['message']}", status_code=S_BADREQUEST_CODE)
